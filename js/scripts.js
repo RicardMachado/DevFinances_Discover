@@ -38,24 +38,18 @@ const transactions = [
         amount: -60000,
         date: '23/09/2021'
     },
-    {
-        id: 5,
-        description: 'Salario',
-        amount: 600000,
-        date: '23/09/2021'
-    },
-    {
-        id: 6,
-        description: 'Mesada',
-        amount: 10000,
-        date: '23/09/2021'
-    },
 ]
 
 const Transaction = {
+    all:transactions,
+    add(transaction) {
+        Transaction.all.push(transaction)
+        App.reload()
+    },
+
     incomes() {
         let income = 0
-        transactions.forEach(transaction => {
+        Transaction.all.forEach(transaction => {
             if ( transaction.amount > 0) {
                 income = income + transaction.amount;
             }
@@ -65,7 +59,7 @@ const Transaction = {
 
     expenses() {
         let expense = 0
-        transactions.forEach(transaction => {
+        Transaction.all.forEach(transaction => {
             if ( transaction.amount < 0 ) {
                 expense = expense + transaction.amount
             }
@@ -114,6 +108,10 @@ const DOM = {
         document
             .getElementById('totalDisplay')
             .innerHTML = Utils.formatCurrency(Transaction.total())
+    },
+
+    clearTransactions() {
+        DOM.transactionsContainer.innerHTML = ""
     }
 }
 
@@ -133,10 +131,29 @@ const Utils = {
     }
 }
 
-//Preenche a tabela do index
-transactions.forEach(function(transaction) {
-    DOM.addTransaction(transaction)
-})
+const App = {
+    init() {
+    //Preenche a tabela do index
+    Transaction.all.forEach(transaction => {
+        DOM.addTransaction(transaction)
+    })
 
-//Chamar o Update Balance
-DOM.updateBalance();
+    //Chamar o Update Balance
+    DOM.updateBalance();
+    },
+
+    reload() {
+        DOM.clearTransactions()
+        App.init()
+    },
+}
+
+App.init()
+
+//Add Transaction
+Transaction.add({
+    id: 39,
+    description: 'Teste',
+    amount: 200,
+    date:"23/01/2021"
+})
