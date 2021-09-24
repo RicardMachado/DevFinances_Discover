@@ -117,6 +117,16 @@ const DOM = {
 }
 
 const Utils = {
+    formatDate(date) {
+        const splittedDate = date.split("-")
+        return `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`
+    },
+
+    formatAmount(value) {
+        value = Number(value) * 100
+        return value
+    },
+
     formatCurrency(value) {
         const signal = Number(value) < 0 ? "-" : ""
         
@@ -144,10 +154,6 @@ const Form = {
         }
     },
     
-    formartData() {
-        console.log('Formatar os Dados');
-    },
-
     validateFields() {
         const { description, amount, date } = Form.getValues()
         
@@ -156,7 +162,26 @@ const Form = {
              date.trim() === "" ) {
                  throw new Error("Por Favor, preencher todos os campos")
              }
+    },
 
+    formartValues() {
+        let { description, amount, date } = Form.getValues()
+
+        amount = Utils.formatAmount(amount)
+        date = Utils.formatDate(date)
+
+        return {
+            description,
+            amount,
+            date,
+        }
+
+    },
+
+    clearFields() {
+        Form.description.value = ""
+        Form.amount.value = ""
+        Form.date.value = ""
     },
 
     submit(event) {
@@ -164,8 +189,10 @@ const Form = {
 
         try {
             Form.validateFields()
-            //Form.formartData()
-
+            const transaction = Form.formartValues()
+            Transaction.add(transaction)
+            Form.clearFields()
+            Modal.close()
         } catch (error) {
             alert(error.message)
         }
