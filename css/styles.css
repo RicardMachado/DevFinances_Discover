@@ -274,7 +274,7 @@ input {
 }
 
 .input-group small {
-    opacity: 0.4rem;
+    opacity: 0.4;
 }
 
 .input-group.actions {
